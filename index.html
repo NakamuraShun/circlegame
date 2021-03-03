@@ -1,0 +1,136 @@
+<style>
+body{background-color: rgb(243, 242, 242); max-width: 1000px; margin: 0 auto; text-align: center; padding-top: 20px;}
+.info{text-align: center;}
+button{display: inline-block; margin-bottom: 20px;}
+.canvas {width: 600px; display: inline-flex; flex-wrap: wrap; }
+.canvas__itm { width: 33%; height: 200px; background-color:#fff; border: 1px solid #333; display: flex; align-items: center; justify-content: center; cursor: pointer;}
+.canvas__itm:hover{background-color: rgb(192, 189, 18);}
+
+.field--circle{ color: blue; font-size: 60px;}
+.field--cross{ color: red; font-size: 80px; }
+</style>
+
+<html>
+<body>
+<div class="info">
+    <h1 id="js-msg">先行は ○ です。</h1>
+    <button id="js-reset">リセットして初めから開始する</button>
+</div>
+
+<div class="canvas" id="js-canvas" data-flg="js-flg--circle">
+    <div class="canvas__itm js-canvas__itm" id="js-F1" data-judge="F1"></div>
+    <div class="canvas__itm js-canvas__itm" id="js-F2" data-judge="F2"></div>
+    <div class="canvas__itm js-canvas__itm" id="js-F3" data-judge="F3"></div>
+    <div class="canvas__itm js-canvas__itm" id="js-F4" data-judge="F4"></div>
+    <div class="canvas__itm js-canvas__itm" id="js-F5" data-judge="F5"></div>
+    <div class="canvas__itm js-canvas__itm" id="js-F6" data-judge="F6"></div>
+    <div class="canvas__itm js-canvas__itm" id="js-F7" data-judge="F7"></div>
+    <div class="canvas__itm js-canvas__itm" id="js-F8" data-judge="F8"></div>
+    <div class="canvas__itm js-canvas__itm" id="js-F9" data-judge="F9"></div>
+</div>
+
+</body>
+</html>
+
+<script>
+/* function
+*****************************************************************/
+let = judge = () => 
+{
+    let canvasItms = document.querySelectorAll('.js-canvas__itm');
+    let key_num = '';
+    let key = '';
+    let judge = '';
+    let judgeData = {};
+
+    for(let i = 0, len = canvasItms.length; i < len; ++i)
+    {
+        key_num = i + 1;
+        key = 'F' + key_num;
+        judge = canvasItms[i].dataset.judge;
+        judgeData[key] = judge;
+    }
+
+    if(
+        (judgeData.F1 == judgeData.F2 && judgeData.F2 == judgeData.F3) ||
+        (judgeData.F4 == judgeData.F5 && judgeData.F5 == judgeData.F6) ||
+        (judgeData.F7 == judgeData.F8 && judgeData.F8 == judgeData.F9) ||
+        (judgeData.F1 == judgeData.F4 && judgeData.F4 == judgeData.F7) ||
+        (judgeData.F2 == judgeData.F5 && judgeData.F5 == judgeData.F8) ||
+        (judgeData.F3 == judgeData.F6 && judgeData.F6 == judgeData.F9) ||
+        (judgeData.F1 == judgeData.F5 && judgeData.F5 == judgeData.F9) ||
+        (judgeData.F3 == judgeData.F5 && judgeData.F5 == judgeData.F7)) 
+    {
+        let canvas = document.getElementById('js-canvas');
+        let msg = document.getElementById('js-msg');
+
+        switch (canvas.dataset.flg)
+        {
+            case 'js-flg--circle':
+                alert('○ の勝利です！');
+                msg.innerText = '○ の勝利です！';
+                window.location.reload();
+                break;
+
+            case 'js-flg--cross':
+                alert('× の勝利です！');
+                msg.innerText = '× の勝利です！';
+                window.location.reload();
+                break;
+        }
+    }
+    else
+    {
+        console.log('不一致');
+    }
+}
+
+
+let draw = (e) => {
+    e.addEventListener('click' , () => {
+        if (e.innerText == "")
+        {
+            let canvas = document.getElementById('js-canvas');
+            let msg = document.getElementById('js-msg');
+
+            switch (canvas.dataset.flg)
+            {
+                case 'js-flg--circle':
+                    e.classList.add('field--circle');
+                    e.innerText = '○';
+                    e.dataset.judge = 'judge--circle';
+                    msg.innerText = '× の番です。';
+                    judge();
+                    canvas.dataset.flg = 'js-flg--cross';
+                    break;
+
+                case 'js-flg--cross':
+                    e.classList.add('field--cross');
+                    e.innerText = '×';
+                    e.dataset.judge = 'judge--cross';
+                    msg.innerText = '○ の番です。';
+                    judge();
+                    canvas.dataset.flg = 'js-flg--circle';
+                    break;
+            }            
+        }
+        else
+        {
+            alert('別のフィールドを選択してください。');
+        }
+    })
+}
+
+/* event
+*****************************************************************/
+let canvasItms = document.querySelectorAll('.js-canvas__itm');
+    canvasItms.forEach((canvasItm) =>
+{
+    draw(canvasItm);
+})
+
+let restBtn = document.getElementById('js-reset');
+    restBtn.addEventListener('click' , ()=> window.location.reload());
+</script>
+
+
